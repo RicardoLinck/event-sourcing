@@ -29,7 +29,7 @@ namespace Tests
             var sut = new TransactionAggregate(Guid.NewGuid(), 10.99M, new Card("1234567890", new ExpiryDate(2020, 10)));
             
             // Assert
-            Assert.That(sut.UncommittedEvents.First(), Is.TypeOf<AddedEvent>());
+            Assert.That(sut.PendingEvents.First(), Is.TypeOf<AddedEvent>());
         }
 
         [Test]
@@ -40,12 +40,12 @@ namespace Tests
             var sut = new TransactionAggregate(Guid.NewGuid(), amount, new Card("1234567890", new ExpiryDate(2020, 10)));
 
             // Act
-            sut.UncommittedEvents.Clear();
+            sut.PendingEvents.Clear();
             sut.Authorize(amount);
 
             // Assert
             AuthorizedEvent authorizedEvent;
-            Assert.That(authorizedEvent = (AuthorizedEvent)sut.UncommittedEvents.First(), Is.TypeOf<AuthorizedEvent>());
+            Assert.That(authorizedEvent = (AuthorizedEvent)sut.PendingEvents.First(), Is.TypeOf<AuthorizedEvent>());
             Assert.AreEqual(amount, authorizedEvent.AuthorizedAmount);
             Assert.AreEqual(amount, sut.AuthorizedAmount);
         }
@@ -59,8 +59,8 @@ namespace Tests
             var id = Guid.NewGuid();
             var eventHistory = new List<Event>()
             {
-                {new AddedEvent(amount,card){Version = 1, Id = Guid.NewGuid(), SourceId = id}},
-                {new AuthorizedEvent(amount){Version = 2, Id = Guid.NewGuid(), SourceId = id}}
+                {new AddedEvent(amount,card){Version = 1, Id = Guid.NewGuid(), AggregateId = id}},
+                {new AuthorizedEvent(amount){Version = 2, Id = Guid.NewGuid(), AggregateId = id}}
             };
 
             // Act

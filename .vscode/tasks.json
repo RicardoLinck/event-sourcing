@@ -12,6 +12,37 @@
                 "reveal": "silent"
             },
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "start mongodb",
+            "command": "docker",
+            "args": [
+                "run",
+                "--name",
+                "mongo",
+                "-p",
+                "27017:27017",
+                "-d",
+                "mongo:latest"
+            ],
+            "type": "shell",
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "remove mongodb",
+            "command": "docker",
+            "args": [
+                "container",
+                "rm",
+                "mongo",
+                "-f"
+            ],
+            "type": "shell",
+            "presentation": {
+                "reveal": "silent"
+            }
         }
     ]
 }

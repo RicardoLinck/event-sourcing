@@ -8,7 +8,7 @@ namespace EventSourcing.Base
     {
         private readonly Dictionary<Type, Action<Event>> _handlers = new Dictionary<Type, Action<Event>>();
 
-        public List<Event> UncommittedEvents { get; } = new List<Event>();
+        public List<Event> PendingEvents { get; } = new List<Event>();
         public int Version { get; private set; }
         public Guid Id { get; }
 
@@ -38,12 +38,12 @@ namespace EventSourcing.Base
         protected void HandleEvent(Event @event)
         {
             @event.Id = Guid.NewGuid();
-            @event.SourceId = Id;
+            @event.AggregateId = Id;
             @event.Created = DateTime.UtcNow;
             @event.Version = Version + 1;
             _handlers[@event.GetType()].Invoke(@event);
             Version = @event.Version;
-            UncommittedEvents.Add(@event);
+            PendingEvents.Add(@event);
         }
 
         protected void LoadFromHistory(IEnumerable<Event> eventHistory)
